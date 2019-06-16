@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -28,8 +29,87 @@
                 <input type="submit" class="input_sub" value="登 录">
             </form>
         </div>
+    </div>
 
-    </div> 
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            // 点击登录按钮
+            $('.input_sub').on('click', function (e) {
+                e.preventDefault();//清除input中提交按钮的默认事件
+                var user_name = $('.input_txt').val().trim();
+                var password = $('.input_pass').val().trim();
+                // 判断账号密码是否为空
+                if (user_name == '' || password == '') {
+                    // bootstrap模态框的方法
+                    $('#myModal').modal({
+                        keyboard: false
+                    });
+                    $('.modal-body').text('您输入的账号密码为空!!');
+                    // 为空不需要在执行后面的
+                    return;
+                }
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/login',
+                    data: {
+                        user_name: user_name,
+                        password: password
+                    },
+                    success: function (xhrData) {
+                        // 通过返回的数据判断
+                        if (xhrData.code != 200) {
+                            // bootstrap模态框的方法
+                            $('#myModal').modal({
+                                keyboard: false
+                            });
+                            $('.modal-body').text('您输入的账号或密码错误!!');
+                        } else {
+                            // 账号密码正确 跳转到index.html首页
+                            window.location.href = './index.html';
+                        }
+                    }
+                });
+            })
+
+            /*
+             步骤:
+             1.给登录按钮设置一个点击事件.
+                 获取用户输入的账号和密码
+                 做非空判断,如果为空,提示; 如果不为空,继续
+
+             2.发ajax请求
+                 在success函数中去判断请求回来的数据是不是登录成功
+                 如果不是,提示一下 账号或密码错误
+                 如果是,跳转到首页index.html
+
+             */
+
+        })
+
+    </script>
 
 </body>
 

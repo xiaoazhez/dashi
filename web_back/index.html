@@ -130,8 +130,11 @@
                 $('.level02').children().eq(n).addClass('active').siblings().removeClass('active');
             }
         }
+    </script>
 
-
+    <script>
+    $(function(){
+        
         // 点击退出  退出首页  调到登录页面
         $('#tuichu').on('click', function (e) {
             e.preventDefault();
@@ -153,11 +156,18 @@
                     }
                 }
             })
+            });
 
-
-
-        })
-
+            $.ajax({
+                type:'get',
+                url:'http://localhost:8000/admin/getuser',
+                success:function(xhrData){
+                    $('.user_info>span').text(xhrData.data.nickname);
+                    $('.user_info>img').attr('src',xhrData.data.user_pic);
+                }
+            })
+    })
+    
     </script>
 
 </body>

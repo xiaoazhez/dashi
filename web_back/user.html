@@ -24,38 +24,44 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" name='username'  class="form-control username" id="inputEmail3" value="李思思">
+                        <input type="text" name='username' class="form-control username" id="inputEmail3" value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text"  name='nickname' class="form-control  nickname" id="inputEmail3" value="思思">
+                        <input type="text" name='nickname' class="form-control  nickname" id="inputEmail3" value="思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text"  name="email" class="form-control  email" id="inputEmail3" value="lisisi@126.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
-                    <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile" name="user_pic">
+                        <input type="text" name="email" class="form-control  email" id="inputEmail3"
+                            value="lisisi@126.com">
                     </div>
                 </div>
 
                 <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
-                        <div class="col-sm-4">
-                            <input type="password" name="password" class="form-control password" id="inputEmail3" value="12345678">
-                        </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="images/2.jpg" alt="" class="user_pic">
+                        <!-- label的for属性,放一个input的id,那点击这个label就相当于点击了这个input. -->
+                        <label for="exampleInputFile">
+                            <img src="./images/pic06.jpg" alt="">
+                        </label>
+                        <input type="file" id="exampleInputFile" name="user_pic" style="opacity: 0">
                     </div>
-               
-    
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input type="password" name="password" class="form-control password" id="inputEmail3"
+                            value="12345678">
+                    </div>
+                </div>
+
+
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-success">修改</button>
@@ -67,57 +73,74 @@
 
 
     <script>
-      $(function(){
-        $.ajax({
-            type:'get',
-            url:'http://localhost:8000/admin/userinfo_get',
-            success:function(xhrData){
-                console.log(xhrData);
-                for(var key in xhrData.data){
-                    $('input.'+ key).val(xhrData.data[key]);
+        $(function () {
+            // 发送ajax请求返回数据渲染到用户信息
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/userinfo_get',
+                success: function (xhrData) {
+                    console.log(xhrData);
+                    // 遍历对象  拼接
+                    for (var key in xhrData.data) {
+                        $('input.' + key).val(xhrData.data[key]);
+                    }
+                    // img加的是属性
+                    $('img.user_pic').attr('src', xhrData.data.user_pic);
+
                 }
-                $('img.user_pic').attr('src', xhrData.data.user_pic);
+            });
+            //图片预览
+            $('#exampleInputFile').on('change', function () {
+                //1.获取你选中的文件.
+                var icon = this.files[0]; //files是一个dom的属性,只能用dom对象点出来.
+                //2.生成一个url
+                var url = URL.createObjectURL(icon);
+                // 把这个url给img的src
+                var user_pic = $('.user_pic').attr('src', url);
+            });
 
-            }
-        });
-
-       $('#exampleInputFile').on('change',function(){
-           var icon = this.files[0];
-           var url = URL.createObjectURL(icon);
-           var user_pic = $('.user_pic').attr('src',url);
-       });
-       
-       $('.btn-success').on('click',function(e){
-           e.preventDefault();
-           var formData = new FormData($('form')[0]);
-
-           $.ajax({
-               type:'post',
-               url:'http://localhost:8000/admin/userinfo_edit',
-               contentType:false,
-               processData:false,
-               data:formData,
-               success:function(xhrData){
-                   console.log(xhrData);
-                //    parent.$('.user_info>span').text(xhrData.data.nickname);
-                //    parent.$('.user_info>img').attr('src',xhrData.data.user_pic);
-               }
-           })
-           
-
-          
-           
-
-
-       })
+            // 给修改按钮加点击事件
+            $('.btn-success').on('click', function (e) {
+                e.preventDefault();//阻止默认跳转
+                //新建一个FormData对象
+                var formData = new FormData($('form')[0]);
+                // 发送ajax请求
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/userinfo_edit',
+                    contentType: false,//不要设置请求头
+                    processData: false,//不要帮我把formData的数据转成 key=value这种格式的字符串.
+                    data: formData,
+                    success: function (xhrData) {
+                        console.log(xhrData);
+                        if (xhrData.code == 200) {
+                            $.ajax({
+                                type: 'get',
+                                url: 'http://localhost:8000/admin/getuser',
+                                success: function (xhrData) {
+                                    parent.$('.user_info>span').text(xhrData.data.nickname);
+                                    parent.$('.user_info>img').attr('src', xhrData.data.user_pic);
+                                    parent.$('.user_center_link>img').attr('src', xhrData.data.user_pic);
+                                }
+                            })
+                        }
+                    }
+                })
 
 
 
 
-      })
 
 
-        
+            })
+
+
+
+
+        })
+
+
+
 
     </script>
 

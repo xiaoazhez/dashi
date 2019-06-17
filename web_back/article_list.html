@@ -275,6 +275,34 @@
         })
     </script>
 
+    <script>
+    $(function(){
+        $('#btnSearch').on('click',function(){
+            var type = $('#selCategory').val();
+            var state = $('#selStatus').val();
+            $.ajax({
+                type:'get',
+                url:'http://localhost:8000/admin/search',
+                data:{
+                    key:'',
+                    type:type,
+                    state:state,
+                    page:1,
+                    perpage:6,
+                },
+                success:function(xhrData){
+                    console.log(xhrData);
+                    
+                }
+            })
+        })
+
+
+
+    })
+    
+    </script>
+
 </body>
 
 </html>

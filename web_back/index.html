@@ -164,10 +164,10 @@
                 success:function(xhrData){
                     $('.user_info>span').text(xhrData.data.nickname);
                     $('.user_info>img').attr('src',xhrData.data.user_pic);
+                    $('.user_center_link>img').attr('src',xhrData.data.user_pic);
                 }
-            })
+            });
     })
-    
     </script>
 
 </body>

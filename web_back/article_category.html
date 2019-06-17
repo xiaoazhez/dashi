@@ -140,7 +140,7 @@
                 <td class="text-center">
                     <a href="javascript:editTr({&quot;id&quot;:&quot;2&quot;,&quot;slug&quot;:&quot;funny&quot;,&quot;name&quot;:&quot;奇趣事&quot;});"
                         class="btn btn-info btn-xs">编辑</a>
-                    <a href="javascript:void(0);" dataId = '{{v.id}}' class="btn btn-danger btn-xs">删除</a>
+                    <a href="javascript:void(0);" dataId = '{{v.id}}' class="btn btn-danger btn-xs btn-delete">删除</a>
                 </td>
             </tr>
         {{/each}}
@@ -159,6 +159,7 @@
                 }
             });
 
+            // 新增分类
             $('#model_add').on('click', function () {
                 // 新增的分类名称
                 var name = $('#recipient-name1').val();
@@ -187,6 +188,34 @@
                         }
                     }
                 });
+            });
+
+            // 删除分类
+            $('tbody').on('click', 'a.btn-delete', function () {
+                var id = $(this).attr('dataId');
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/category_delete',
+                    data: {
+                        id: id
+                    },
+                    success: function (xhrData) {
+                        console.log(xhrData);
+                        if (xhrData.code == 200) {
+                            // 页面打开就把文章分类渲染到页面
+                            $.ajax({
+                                type: 'get',
+                                url: 'http://localhost:8000/admin/category_search',
+                                success: function (xhrData) {
+                                    console.log(xhrData);
+                                    // 通过模板
+                                    var resHtml = template('temp1', xhrData);
+                                    $('tbody').html(resHtml);
+                                }
+                            });
+                        }
+                    }
+                })
             })
 
 
